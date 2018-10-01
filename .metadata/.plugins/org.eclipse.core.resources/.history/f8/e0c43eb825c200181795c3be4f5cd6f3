@@ -1,0 +1,5 @@
+package com.capgemini.bankappcheck.repositoryimpl;
+
+public class CustomerRepositoryImpl {
+
+}

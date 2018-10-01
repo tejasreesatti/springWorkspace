@@ -1,0 +1,51 @@
+package com.capgemini.bankappcheck.serviceimpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.capgemini.bankappcheck.repository.BankAppRepository;
+import com.capgemini.bankappcheck.repositoryimpl.BankAppRepositoryImpl;
+import com.capgemini.bankappcheck.service.BankAppService;
+
+public class BankAppServiceImpl implements BankAppService {
+	@Autowired
+	private BankAppRepositoryImpl bankAppRepositoryImpl;
+	private BankAppService bankAppService;
+	
+	
+	@Override
+	public double getBalance(long accountId) {
+		
+		return bankAppRepositoryImpl.getBalance(accountId);
+		
+	}
+
+	@Override
+	public boolean withdraw(long accountId, double amount) {
+		if((bankAppService.getBalance(accountId)- amount) > 0) {
+			double newBalance = bankAppService.getBalance(accountId) - amount;
+			if((bankAppRepositoryImpl.updateBalance(accountId, newBalance)))
+				return true;
+		}
+	return false;
+	}
+
+	@Override
+	public boolean deposit(long accountId, double amount) {
+		double newBalance = bankAppService.getBalance(accountId) + amount;
+		if(bankAppRepositoryImpl.updateBalance(accountId, newBalance)) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean fundTransfer(long fromAcc, long toAcc, double amount) {
+		if(bankAppService.getBalance(fromAcc) < 0) {
+			return false;
+		}
+		else if((bankAppService.withdraw(fromAcc, amount))&& (bankAppService.deposit(toAcc, amount))) {
+			return true;
+		}
+		return false;
+	}
+}

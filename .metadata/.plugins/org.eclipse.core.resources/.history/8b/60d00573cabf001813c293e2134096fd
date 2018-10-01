@@ -1,0 +1,5 @@
+package com.capgemini.employeeapp.servive;
+
+public interface EmployeeService {
+
+}

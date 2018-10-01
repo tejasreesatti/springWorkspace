@@ -1,0 +1,24 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Sample</title>
+</head>
+<body background="${pageContext.request.contextPath}/resources/images/image2.jpg">
+<br>
+<h1><b><i><center>HELLO WORLD :-)</center></i></b></h1>
+<center><img src="${pageContext.request.contextPath}/resources/images/image3.jpg"></center>
+<link href="${pageContext.request.contextPath}/resources/css/style.css"
+    rel="stylesheet">
+<script src="${pageContext.request.contextPath}/resources/js/javascript.js"></script>
+<br><br>
+<h2>Hi!!! this style is defined in css file</h2>
+
+<br>
+    <br>
+ 
+   <center><input type="button" onclick="doSomeWork()" value="Click Me" /></center> 
+</body>
+</html>

@@ -1,0 +1,115 @@
+package com.capgemini.bankappcheck.repositoryimpl;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import com.capgemini.bankappcheck.model.BankAccount;
+import com.capgemini.bankappcheck.model.Customer;
+import com.capgemini.bankappcheck.repository.CustomerRepository;
+@Repository
+public class CustomerRepositoryImpl implements CustomerRepository {
+	private JdbcTemplate jdbcTemplate;
+	
+
+	/*@Override
+	public Customer authenticate(Customer customer) {
+		 jdbcTemplate.queryForObject("Select * FROM customers WHERE customerId=? Password=?", new Object[] {customer.getCustomerId(),customer.getPassword()},Double.class);
+			
+		 return customer;
+	}
+
+	@Override
+	public Customer updateProfile(Customer customer) {
+		jdbcTemplate.update("Select FROM Customers WHERE customerId=?", new Object[] {customer.getCustomerName()});
+		return customer;
+	}
+
+	@Override
+	public boolean updatePassword(Customer customer, String oldPassword, String newPassword) {
+		  jdbcTemplate.update("Select FROM Customers Where customerPassword=?",new Object[] {customer.getPassword()});
+			return true;
+		}
+
+	}*/
+
+
+
+
+public Customer authenticate(Customer customer) {
+	customer = jdbcTemplate.queryForObject("SELECT * FROM customers WHERE customerId = ? AND Password = ?",
+			new Object[] { customer.getCustomerId(),customer.getPassword() }, new CustomerRowMapper());
+	BankAccount bankAccount = jdbcTemplate.queryForObject("SELECT * FROM bankaccount WHERE accountId = "
+			+ "(SELECT accountId FROM customers WHERE customerId = ?)",new Object[] { customer.getCustomerId() }, 
+			new AccountRowMapper());
+	customer.setBankAccount(bankAccount);
+	return customer;
+}
+
+@Override
+public Customer updateProfile(Customer customer) {
+	jdbcTemplate.update(
+			"UPDATE customers SET Address = ?,customer_dob = ?,customer_email=?,customer_name=?   WHERE customer_id = ?",new Object[] { customer.getAddress(), customer.getDateOfBirth(),customer.getEmail(), customer.getCustomerName(), customer.getCustomerId() });
+	customer = jdbcTemplate.queryForObject("SELECT * FROM customers WHERE customer_id=?",
+			new Object[] { customer.getCustomerId() }, new CustomerRowMapper());
+	return customer;
+
+}
+
+@Override
+public boolean updatePassword(Customer customer, String oldPassword, String newPassword) {
+	int count = jdbcTemplate.update(
+			"UPDATE customers SET customer_password = ?  WHERE customer_id = ? AND customer_password = ?",
+			new Object[] { newPassword, customer.getCustomerId(), oldPassword });
+	return (count != 0) ? true : false;
+	
+}
+
+/*@Override
+public Customer updateSession(long customerId) {
+	Customer customer = jdbcTemplate.queryForObject("SELECT * FROM customers WHERE customer_id=?",new Object[] { customerId }, new CustomerRowMapper());
+	BankAccount bankAccount = jdbcTemplate.queryForObject(
+			"SELECT * FROM accounts WHERE account_id = (SELECT account_id FROM customers WHERE customer_id = ?)",
+			new Object[] { customerId }, new AccountRowMapper());
+	customer.setBankAccount(bankAccount);
+	return customer;
+}
+*/
+private class CustomerRowMapper implements RowMapper<Customer> {
+
+	@Override
+	public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
+		Customer customer = new Customer();
+		customer.setCustomerId(rs.getInt(1));
+		customer.setCustomerName(rs.getString(2));
+		customer.setPassword(rs.getString(3));
+		customer.setEmail(rs.getString(4));
+		customer.setAddress(rs.getString(5));
+		customer.setDateOfBirth(rs.getDate(6).toLocalDate());
+		return customer;
+
+	}
+
+}
+
+private class AccountRowMapper implements RowMapper<BankAccount> {
+
+	@Override
+	public BankAccount mapRow(ResultSet rs, int rowNum) throws SQLException {
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setAccountId(rs.getLong(1));
+		bankAccount.setAccountType(rs.getString(2));
+		bankAccount.setBalance(rs.getDouble(3));
+		return bankAccount;
+	}
+
+	
+	
+
+	}
+
+
+}

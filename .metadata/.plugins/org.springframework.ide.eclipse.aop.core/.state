@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aop-reference-model>
+<aop-project name="bankapp2"/>
+<aop-project name="simpleapp"/>
+<aop-project name="bankappcheck"/>
+<aop-project name="bankapp"/>
+<aop-project name="employeeapp"/>
+</aop-reference-model>

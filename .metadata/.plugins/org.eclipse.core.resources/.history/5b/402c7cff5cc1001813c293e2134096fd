@@ -1,0 +1,5 @@
+package com.capgemini.simpleapp.controller;
+
+public class HelloWorldController {
+
+}

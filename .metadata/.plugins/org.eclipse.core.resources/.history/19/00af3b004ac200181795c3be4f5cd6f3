@@ -1,0 +1,5 @@
+package com.capgemini.bankappcheck.serviceimpl;
+
+public class CustomerServiceImpl {
+
+}

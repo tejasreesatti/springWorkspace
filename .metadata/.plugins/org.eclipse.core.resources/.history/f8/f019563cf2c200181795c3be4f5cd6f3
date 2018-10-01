@@ -1,0 +1,33 @@
+package com.capgemini.bankappcheck.serviceimpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import com.capgemini.bankappcheck.model.Customer;
+import com.capgemini.bankappcheck.service.CustomerService;
+@Service
+public class CustomerServiceImpl implements CustomerService {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+	@Override
+	public Customer authenticate(Customer customer) {
+		 jdbcTemplate.queryForObject("Select * FROM Customers WHERE customerId=? Password=?", new Object[] {customer.getCustomerId(),customer.getPassword()},Double.class);
+			
+		 return customer;
+	}
+
+	@Override
+	public Customer updateProfile(Customer customer) {
+		jdbcTemplate.update("Select FROM Customers WHERE customerId=?", new Object[] {customer.getCustomerName()});
+		return customer;
+	}
+
+	@Override
+	public boolean updatePassword(Customer customer, String oldPassword, String newPassword) {
+		  jdbcTemplate.update("Select FROM Customers Where customerPassword=?",new Object[] {customer.getPassword()});
+			return true;
+	}
+
+}
